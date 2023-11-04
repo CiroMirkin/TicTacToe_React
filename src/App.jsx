@@ -4,9 +4,11 @@ import { Cell } from './Cell'
 import { TURNS, WINNER_COMBOS } from './constants'
 
 function App() {
-  const [ board, setBoard] = useState(Array(9).fill(null))
+  const initialBoard = Object.freeze(Array(9).fill(null))
+  const initialWinner = null
+  const [ board, setBoard] = useState(initialBoard)
   const [ turn, setTurn ] = useState(TURNS.X)
-  const [ winner, setWinner] = useState(null) // null es sin ganador - false es empate
+  const [ winner, setWinner] = useState(initialWinner) // null es sin ganador - false es empate
 
   const checkWinnerFrom = (boardToCheck) => {
     // se revisan todas las combinaciones ganadoras
@@ -39,6 +41,11 @@ function App() {
     }
   }
 
+  const resetGame = () => {
+    setBoard(initialBoard)
+    setTurn(winner)
+    setWinner(initialWinner)
+  }
 
   return (
     <main className='board'>
@@ -60,6 +67,22 @@ function App() {
           {TURNS.O}
         </Cell>
       </section>
+      {
+        winner !== null && (
+          <section className="winner">
+            <div className="text">
+              <header>
+                <h2>
+                  {`Gano el waso numero ${winner == 1 ? "uno" : "cero"}`}
+                </h2>
+              </header>
+            <footer>
+              <button onClick={resetGame}>Reiniciar</button>
+            </footer>
+            </div>
+          </section>
+        )
+      }
     </main>
   )
 }
