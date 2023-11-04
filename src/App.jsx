@@ -25,6 +25,10 @@ function App() {
     return null
   }
 
+  const checkEndGame = (newBoard) => {
+    return newBoard.every(cell => cell !== null)
+  }
+
   const updateBoard = (index) => {
     if(board[index] || winner) return;
 
@@ -38,6 +42,9 @@ function App() {
     const newWinner = checkWinnerFrom(newBoard);
     if(newWinner) {
       setWinner(newWinner)
+    }
+    else if(checkEndGame(newBoard)) {
+      setWinner(false)
     }
   }
 
@@ -73,7 +80,7 @@ function App() {
             <div className="text">
               <header>
                 <h2>
-                  {`Gano el waso numero ${winner == 1 ? "uno" : "cero"}`}
+                  {winner == false ? "Son malardos" : (`Gano el waso numero ${winner == 1 ? "uno" : "cero"}`)}
                 </h2>
               </header>
             <footer>
