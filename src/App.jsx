@@ -1,33 +1,18 @@
 import { useState } from 'react'
 import './App.css'
 import { Cell } from './Cell'
-import { TURNS, WINNER_COMBOS } from './constants'
+import { TURNS } from './constants'
+import { checkWinnerFrom } from './checkWinnerFrom'
+import { checkEndGame } from './checkEndGame'
+import { WinnerModal } from './WinnerModal'
+import { Turn } from './Turn'
 
 function App() {
   const initialBoard = Object.freeze(Array(9).fill(null))
   const initialWinner = null
   const [ board, setBoard] = useState(initialBoard)
   const [ turn, setTurn ] = useState(TURNS.X)
-  const [ winner, setWinner] = useState(initialWinner) // null es sin ganador - false es empate
-
-  const checkWinnerFrom = (boardToCheck) => {
-    // se revisan todas las combinaciones ganadoras
-    for (const combo of WINNER_COMBOS) {
-      const [a, b, c] = combo
-      if (
-        boardToCheck[a] &&
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[a] === boardToCheck[c]
-      ) {
-        return boardToCheck[a]
-      }
-    }
-    return null
-  }
-
-  const checkEndGame = (newBoard) => {
-    return newBoard.every(cell => cell !== null)
-  }
+  const [ winner, setWinner] = useState(initialWinner) // null es sin ganador - false es empat
 
   const updateBoard = (index) => {
     if(board[index] || winner) return;
@@ -47,7 +32,7 @@ function App() {
       setWinner(false)
     }
   }
-
+  
   const resetGame = () => {
     setBoard(initialBoard)
     setTurn(winner)
@@ -57,6 +42,7 @@ function App() {
   return (
     <main className='board'>
       <h1>Tic Tac Toe</h1>
+
       <section className="game">
         {
           board.map((cell ,index) => (
@@ -66,30 +52,10 @@ function App() {
           ))
         }
       </section>
-      <section className="turn">
-        <Cell isSelected={turn === TURNS.X}>
-          {TURNS.X}
-        </Cell>
-        <Cell isSelected={turn === TURNS.O}>
-          {TURNS.O}
-        </Cell>
-      </section>
-      {
-        winner !== null && (
-          <section className="winner">
-            <div className="text">
-              <header>
-                <h2>
-                  {winner == false ? "Son malardos" : (`Gano el waso numero ${winner == 1 ? "uno" : "cero"}`)}
-                </h2>
-              </header>
-            <footer>
-              <button onClick={resetGame}>Reiniciar</button>
-            </footer>
-            </div>
-          </section>
-        )
-      }
+
+      <Turn actualTurn={turn}></Turn>
+
+      <WinnerModal winner={winner} resetGameFunction={resetGame} />
     </main>
   )
 }
