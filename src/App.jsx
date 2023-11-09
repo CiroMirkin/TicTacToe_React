@@ -9,9 +9,17 @@ import { Turn } from './Turn'
 
 function App() {
   const initialBoard = Object.freeze(Array(9).fill(null))
+  const [ board, setBoard] = useState(() => {
+    const boardFromLocaStorage = window.localStorage.getItem('tictactoe-board')
+    return boardFromLocaStorage ? JSON.parse(boardFromLocaStorage) : initialBoard
+  })
+
+  const [ turn, setTurn ] = useState(() => {
+    const turnFromLocalStorage = window.localStorage.getItem('tictactoe-turn')
+    return turnFromLocalStorage ? turnFromLocalStorage : TURNS.X
+  })
+
   const initialWinner = null
-  const [ board, setBoard] = useState(initialBoard)
-  const [ turn, setTurn ] = useState(TURNS.X)
   const [ winner, setWinner] = useState(initialWinner) // null es sin ganador - false es empat
 
   const updateBoard = (index) => {
@@ -20,9 +28,13 @@ function App() {
     const newTurn = (turn === TURNS.X ? TURNS.O : TURNS.X)
     setTurn(newTurn)
 
+
     const newBoard = [...board]
     newBoard[index] = turn
     setBoard(newBoard)
+
+    window.localStorage.setItem('tictactoe-board', JSON.stringify(newBoard));
+    window.localStorage.setItem('tictactoe-turb', newTurn);
 
     const newWinner = checkWinnerFrom(newBoard);
     if(newWinner) {
@@ -37,6 +49,9 @@ function App() {
     setBoard(initialBoard)
     setTurn(winner)
     setWinner(initialWinner)
+
+    window.localStorage.removeItem('tictactoe-board')
+    window.localStorage.removeItem('tictactoe-turn')
   }
 
   return (
